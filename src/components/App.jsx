@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import s from './App.module.css';
 import Searchbar from 'components/Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
@@ -8,60 +8,52 @@ import Modal from 'components/Modal/Modal';
 import { fetchMovies } from './utilities/apiService';
 import { ToastContainer, toast } from 'react-toastify';
 
-class App extends Component {
-  state = {
-    image: [],
-    searchImage: null,
-    page: null,
-    loading: false,
-    error: null,
-    showModal: false,
-    largeImage: '',
-  };
+const App = () => {
+  const [image, setImage] = useState([]);
+  const [searchImage, setSearchImage] = useState(null);
+  const [page, setPage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [largeImage, setLargeImage] = useState('');
 
-  componentDidUpdate(_, prevState) {
-    if (
-      prevState.searchImage !== this.state.searchImage ||
-      prevState.page !== this.state.page
-    ) {
-      this.setState({ loading: true });
+  useEffect(() => {
+    if (searchImage !== null || page !== null) {
+      setLoading(true);
 
-      fetchMovies(this.state.searchImage, this.state.page)
+      fetchMovies(searchImage, page)
         .then(data => {
-          this.setState(prevState => ({
-            image: [...prevState.image, ...data.hits],
-          }));
-
+          setImage(prevImage => [...prevImage, ...data.hits]);
           window.scrollTo({
             top: document.documentElement.scrollHeight,
             behavior: 'smooth',
           });
         })
-        .catch(error => this.setState({ error }))
-        .finally(() => this.setState({ loading: false }));
+        .catch(error => setError(error))
+        .finally(() => setLoading(false));
     }
-  }
+  }, [searchImage, page]);
 
-  onClickLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const onClickLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
-  modalShow = index => {
-    this.setState({
-      showModal: true,
-      largeImage: this.state.image[index].largeImageURL,
-    });
+  const modalShow = index => {
+    setShowModal(true);
+    setLargeImage(image[index].largeImageURL);
   };
 
-  modalHide = () => {
-    this.setState({ showModal: false });
+  const modalHide = () => {
+    setShowModal(false);
   };
 
-  onFormSubmit = img => {
-    this.setState({ searchImage: img, page: 1, image: [] });
+  const onFormSubmit = img => {
+    setSearchImage(img);
+    setPage(1);
+    setImage([]);
   };
 
-  notify = () => {
+  const notify = () => {
     toast.error('🦄 Wow so easy!', {
       position: 'top-right',
       autoClose: false,
@@ -73,34 +65,30 @@ class App extends Component {
     });
   };
 
-  render() {
-    const { error, image, loading, showModal, largeImage } = this.state;
+  return (
+    <div className={s.App}>
+      <Searchbar onSubmit={onFormSubmit} />
+      <ImageGallery searchQuery={image} onClick={modalShow} />
 
-    return (
-      <div className={s.App}>
-        <Searchbar onSubmit={this.onFormSubmit} />
-        <ImageGallery searchQuery={image} onClick={this.modalShow} />
+      {image.length !== 0 && (
+        <Button text="Load more" onClick={onClickLoadMore} />
+      )}
 
-        {image.length !== 0 && (
-          <Button text="Load more" onClick={this.onClickLoadMore} />
-        )}
+      {error ? notify() : null}
+      {loading && <Loader />}
+      {showModal && <Modal onClose={modalHide} img={largeImage} />}
 
-        {error ? this.notify() : null}
-        {loading && <Loader />}
-        {showModal && <Modal onClose={this.modalHide} img={largeImage} />}
-
-        <ToastContainer
-          position="top-right"
-          autoClose={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-        />
-      </div>
-    );
-  }
-}
+      <ToastContainer
+        position="top-right"
+        autoClose={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+      />
+    </div>
+  );
+};
 
 export default App;
