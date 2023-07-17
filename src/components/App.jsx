@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import s from './App.module.css';
-import SearchBar from 'components/SearchBar/SearchBar';
+import SearchBar from 'components/Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
