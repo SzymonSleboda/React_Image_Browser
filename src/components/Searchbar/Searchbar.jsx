@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import s from './Searchbar.module.css';
+import s from './SearchBar.module.css';
 
-const Searchbar = ({ onSubmit }) => {
+const SearchBar = ({ onSubmit }) => {
   const [img, setImg] = useState('');
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const value = e.target.value.toLowerCase();
     setImg(value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     if (img.trim() === '') {
@@ -27,7 +27,7 @@ const Searchbar = ({ onSubmit }) => {
   };
 
   return (
-    <header className={s.searchbar}>
+    <header className={s.SearchBar}>
       <form className={s.form} onSubmit={handleSubmit}>
         <input
           value={img}
@@ -46,4 +46,4 @@ const Searchbar = ({ onSubmit }) => {
   );
 };
 
-export default Searchbar;
+export default SearchBar;
