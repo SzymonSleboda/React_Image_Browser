@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import s from './SearchBar.module.css';
+import s from './Searchbar.module.css';
 
 const SearchBar = ({ onSubmit }) => {
   const [img, setImg] = useState('');
