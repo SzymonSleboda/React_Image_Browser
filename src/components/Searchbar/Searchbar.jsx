@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import s from './Searchbar.module.css';
 
-const SearchBar = ({ onSubmit }) => {
+const Searchbar = ({ onSubmit }) => {
   const [img, setImg] = useState('');
 
   const handleChange = e => {
@@ -27,7 +27,7 @@ const SearchBar = ({ onSubmit }) => {
   };
 
   return (
-    <header className={s.SearchBar}>
+    <header className={s.Searchbar}>
       <form className={s.form} onSubmit={handleSubmit}>
         <input
           value={img}
@@ -46,4 +46,4 @@ const SearchBar = ({ onSubmit }) => {
   );
 };
 
-export default SearchBar;
+export default Searchbar;
